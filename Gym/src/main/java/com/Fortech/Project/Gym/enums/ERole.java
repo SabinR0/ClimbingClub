@@ -1,7 +1,8 @@
 package com.Fortech.Project.Gym.enums;
 
-public enum Role {
+public enum ERole {
 
-    USER,
-    ADMIN
+    ROLE_USER,
+    ROLE_MODERATOR,
+    ROLE_ADMIN
 }

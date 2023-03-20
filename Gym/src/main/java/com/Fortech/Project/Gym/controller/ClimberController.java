@@ -1,13 +1,15 @@
 package com.Fortech.Project.Gym.controller;
 
-import com.Fortech.Project.Gym.model.Climber;
-import com.Fortech.Project.Gym.model.ClimberProject;
+import com.Fortech.Project.Gym.enums.Gender;
+import com.Fortech.Project.Gym.enums.ProjectType;
+import com.Fortech.Project.Gym.model.*;
 import com.Fortech.Project.Gym.model.request.ClimberProjectRequest;
 import com.Fortech.Project.Gym.repository.ClimberRepository;
 import com.Fortech.Project.Gym.repository.UserRepository;
 import com.Fortech.Project.Gym.service.ClimberService;
 import jakarta.persistence.PostUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +31,7 @@ public class ClimberController {
         this.userRepository = userRepository;
     }
 
-    @GetMapping(path = "/all")
+    @GetMapping("/all")
     public List<Climber> getClimbers() {
         return climberService.getClimbers();
     }
@@ -40,7 +42,7 @@ public class ClimberController {
     }
 
     @GetMapping("/{userId}")
-    public Climber getClimberByUserId(@PathVariable Integer userId) {
+    public Climber getClimberByUserId(@PathVariable Long userId) {
         return climberService.getClimberByUserId(userId);
     }
 
@@ -51,35 +53,27 @@ public class ClimberController {
 
     }
 
+    @GetMapping(path = "/by-gender")
+    public List<Climber> findAllByGenderOrderByTotalPointsDesc(@RequestParam(value = "gender") Gender gender){
+        return climberService.findAllByGenderOrderByTotalPointsDesc(gender);
+    }
 
 
+    @PutMapping("/pleasework/{id}")
+    public ResponseEntity<Climber> updateClimber(@PathVariable Long id) {
+        Climber currentClient = climberRepository.findById(id).orElseThrow(RuntimeException::new);
+        currentClient.recalculateStats();
+        climberRepository.save(currentClient);
 
-//
-//    @GetMapping("/{id}")
-//    public Climber getClimber(@PathVariable Integer climberId) {
-//        return climberRepository.findById(climberId).orElseThrow(RuntimeException::new);
-//    }
-//
-//    @PostMapping
-//    public ResponseEntity createClimber(@RequestBody Climber climber) throws URISyntaxException {
-//        Climber savedClimber = climberRepository.save(climber);
-//        return ResponseEntity.created(new URI("/clients/" + savedClimber.getClimberId())).body(savedClimber);
-//    }
-//
-//    @PutMapping("/{id}")
-//    public ResponseEntity updateClimber(@PathVariable Integer id, @RequestBody Climber climber) {
-//        Climber currentClient = climberRepository.findById(id).orElseThrow(RuntimeException::new);
-//        currentClient.setTotalClimbs(climber.getTotalClimbs());
-//        currentClient = climberRepository.save(climber);
-//
-//        return ResponseEntity.ok(currentClient);
-//    }
-//
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity deleteClimber(@PathVariable Integer climberId) {
-//        climberRepository.deleteById(climberId);
-//        return ResponseEntity.ok().build();
-//    }
+        return ResponseEntity.ok(currentClient);
+    }
+
+
+    @GetMapping("/{climberId}/projects")
+    public Set<ClimberProject> getProjects(@PathVariable Long climberId) {
+        Climber climber = climberRepository.findById(climberId).orElseThrow(() -> new ResourceNotFoundException("Person not found with id " + climberId));
+        return climber.getProjectsSent();
+    }
 
 
 }

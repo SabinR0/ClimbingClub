@@ -1,16 +1,17 @@
 package com.Fortech.Project.Gym.model;
 
 import com.Fortech.Project.Gym.enums.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
-import java.util.Objects;
-import java.util.Set;
+
+import java.util.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.mapping.List;
+import org.hibernate.Hibernate;
 
 
 @Entity
@@ -19,42 +20,52 @@ import org.hibernate.mapping.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Climber {
+public class Climber  {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "climber_id")
-    private Integer climberId;
-    @Enumerated(EnumType.ORDINAL)
-    @Column(name = "skill_level")
-    private Skill skillLevel;
-    @Enumerated(EnumType.ORDINAL)
-    @Column(name = "top_rope_grade")
-    private Difficulty topRopeGrade;
-    @Enumerated(EnumType.ORDINAL)
-    @Column(name = "boulder_grade")
-    private Difficulty boulderGrade;
-    @Column(name = "total_climbs")
-    private Integer totalClimbs;
-    @Column(name = "total_flash")
-    private Integer totalFlash;
-    @Column(name = "total_points")
-    private Integer totalPoints;
-    @Enumerated(EnumType.ORDINAL)
-    @Column(name = "gender")
-    private Gender gender;
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        @Column(name = "climber_id")
+        private Long climberId;
+        @Enumerated(EnumType.ORDINAL)
+        @Column(name = "skill_level")
+        private Skill skillLevel;
+        @Enumerated(EnumType.ORDINAL)
+        @Column(name = "top_rope_grade")
+        private Difficulty topRopeGrade;
+        @Enumerated(EnumType.ORDINAL)
+        @Column(name = "boulder_grade")
+        private Difficulty boulderGrade;
+        @Column(name = "total_climbs")
+        private Integer totalClimbs;
+        @Column(name = "total_flash")
+        private Integer totalFlash;
+        @Column(name = "total_points")
+        private Integer totalPoints;
+        @Enumerated(EnumType.ORDINAL)
+        @Column(name = "gender")
+        private Gender gender;
 
-    @JoinColumn(name = "user_id")
-    private Integer userId;
+        @JoinColumn(name = "user_id")
+        private Long userId;
 
-    @OneToMany(mappedBy = "climberId")
-    Set<ClimberProject> projectsSent;
 
+        @OneToMany(mappedBy = "climberId", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+       private Set<ClimberProject> projectsSent = new HashSet<>();
+
+
+    public void addProjectSent(ClimberProject climberProject) {
+        projectsSent.add(climberProject);
+       // project.getToppedBy().add(projectSent);
+    }
+
+    public Set<ClimberProject> getProjectsSent() {
+        return projectsSent;
+    }
 
     public Integer calculateTotalFlashed(Set<ClimberProject> completedProjects) {
         int totalFlashed = 0;
         for (ClimberProject item : completedProjects) {
-            if (item.getFlashStatus()) {
+            if (item.isFlashed()) {
                 totalFlashed++;
             }
         }
@@ -134,7 +145,9 @@ public class Climber {
     }
 
 
-    public void recalculateStats() {
+    public void recalculateStats( ) {
+
+
         this.totalClimbs = projectsSent.size();
         this.totalFlash = calculateTotalFlashed(projectsSent);
         this.totalPoints = calculatePoints(projectsSent);
@@ -143,7 +156,6 @@ public class Climber {
         this.boulderGrade = calculateBoulderGrade(projectsSent);
     }
 
-    public void addProjectsSent(ClimberProject climberProject) {
-        projectsSent.add(climberProject);
-    }
+
+
 }

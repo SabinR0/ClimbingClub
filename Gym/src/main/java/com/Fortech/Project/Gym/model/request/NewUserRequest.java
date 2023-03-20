@@ -1,7 +1,7 @@
 package com.Fortech.Project.Gym.model.request;
 
 import com.Fortech.Project.Gym.enums.Gender;
-import com.Fortech.Project.Gym.enums.Role;
+import com.Fortech.Project.Gym.enums.ERole;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
@@ -19,7 +19,7 @@ public class NewUserRequest {
     private String password;
     private Gender gender;
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private ERole ERole;
 
 
 }

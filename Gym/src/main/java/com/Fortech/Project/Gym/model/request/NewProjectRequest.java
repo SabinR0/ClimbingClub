@@ -24,5 +24,9 @@ public class NewProjectRequest {
     @Enumerated(EnumType.ORDINAL)
     private ProjectType projectType;
 
+    private Long xCoordinate;
+
+    private Long yCoordinate;
+
 
 }

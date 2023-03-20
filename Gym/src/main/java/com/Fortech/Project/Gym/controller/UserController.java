@@ -31,21 +31,17 @@ public class  UserController {
         this.climberService = climberService;
     }
 
-
-    //    @PostMapping("/register")
-//    public RegisterResponse registerUser(@RequestBody RegisterRequest registerRequest){
-//        return userService.registerUser(registerRequest);
-//    }
-@PostMapping(path = "/new")
-public User createProject(@RequestBody NewUserRequest newUserRequest)
-{
-    return userService.createNewUser(newUserRequest);
-}
 @Transactional
 @DeleteMapping(path = "/delete/{userId}")
-    public void deleteUserByUserId(@PathVariable Integer userId){
+    public void deleteUserByUserId(@PathVariable Long userId){
         climberService.deleteClimberByUserId(userId);
         userService.deleteUserByUserId(userId);
 }
+
+//@PostMapping(path = "/new")
+//public User createNewUser(@RequestBody NewUserRequest newUserRequest)
+//{
+//    return userService.createNewUser(newUserRequest);
+//}
 
 }

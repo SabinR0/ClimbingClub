@@ -1,8 +1,10 @@
 package com.Fortech.Project.Gym.service;
 
+import com.Fortech.Project.Gym.enums.Difficulty;
 import com.Fortech.Project.Gym.enums.ProjectAvailability;
 import com.Fortech.Project.Gym.enums.ProjectType;
 import com.Fortech.Project.Gym.exceptions.ProjectNotFoundException;
+import com.Fortech.Project.Gym.model.ClimberProject;
 import com.Fortech.Project.Gym.model.Project;
 import com.Fortech.Project.Gym.model.request.NewProjectRequest;
 import com.Fortech.Project.Gym.repository.ClimberProjectRepository;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 
@@ -34,7 +37,7 @@ public class ProjectService {
         return projectRepository.findAll();
     }
 
-    public Project findByProjectId(Integer projectId) {
+    public Project findByProjectId(Long projectId) {
         return projectRepository.findByProjectId(projectId);
     }
 
@@ -50,11 +53,11 @@ public class ProjectService {
         return projectRepository.findAllByProjectType(projectType);
     }
     //@Transactional
-    public void deleteProjectByProjectId(Integer projectId) {
+    public void deleteProjectByProjectId(Long projectId) {
          projectRepository.deleteById(projectId);
     }
 
-    public Project updateProjectStatus(Integer projectId, ProjectAvailability newStatus) {
+    public Project updateProjectStatus(Long projectId, ProjectAvailability newStatus) {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ProjectNotFoundException("Project not found with ID " + projectId));
         project.setProjectStatus(newStatus);
@@ -73,7 +76,13 @@ public class ProjectService {
                 .projectStatus(newProjectRequest.getProjectStatus())
                 .projectColor(newProjectRequest.getProjectColor())
                 .numberOfPoints(newProjectRequest.getNumberOfPoints())
+                .climbersRating(Difficulty.V0)
+                .yCoordinate(newProjectRequest.getYCoordinate())
+                .xCoordinate(newProjectRequest.getXCoordinate())
                 .build();
         return projectRepository.save(newProject);
     }
+
+
+
 }

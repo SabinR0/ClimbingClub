@@ -10,13 +10,19 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Set;
-@Repository
-public interface ClimberRepository extends JpaRepository<Climber, Integer> {
-        Climber findByClimberId(Integer climberId);
-        Climber findBySkillLevel(Skill skillLevel);
-        Climber findByUserId(Integer userId);
-        void deleteClimberByUserId(Integer userId);
 
+@Repository
+public interface ClimberRepository extends JpaRepository<Climber, Long> {
+    Climber findByClimberId(Long climberId);
+
+    Climber findBySkillLevel(Skill skillLevel);
+
+    Climber findByUserId(Long userId);
+
+    void deleteClimberByUserId(Long userId);
+
+
+    List<Climber> findAllByGenderOrderByTotalPointsDesc(Gender gender);
 
     Climber findByClimberId(Climber climberId);
 

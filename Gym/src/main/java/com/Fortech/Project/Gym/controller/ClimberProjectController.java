@@ -35,14 +35,14 @@ public class ClimberProjectController {
 
 
     @GetMapping(path = "/{projectId}/climbers")
-    public Set<Climber> findClimbersByProjectId(@PathVariable("projectId") Integer projectId){
+    public Set<Climber> findClimbersByProjectId(@PathVariable("projectId") Long projectId){
         Project project = new Project();
         project.setProjectId(projectId);
         return  climberProjectService.findClimbersByProjectId(project);
     }
 
     @GetMapping(path = "/{climberId}/projects")
-    public Set<Project> getProjectsByClimberId(@PathVariable("climberId") Integer climberId) {
+    public Set<Project> getProjectsByClimberId(@PathVariable("climberId") Long climberId) {
         Climber climber = new Climber();
         climber.setClimberId(climberId);
         return climberProjectService.findProjectsByClimberId(climber);
@@ -50,7 +50,7 @@ public class ClimberProjectController {
 
 
     @GetMapping("/test/{userId}")
-    public Set<ClimberProject> getProjectsSentByUserId(@PathVariable Integer userId) {
+    public Set<ClimberProject> getProjectsSentByUserId(@PathVariable Long userId) {
         return climberProjectService.getProjectsSentByUserId(userId);
     }
 

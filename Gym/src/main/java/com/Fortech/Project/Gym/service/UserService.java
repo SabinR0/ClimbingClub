@@ -38,45 +38,44 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User findUserById(Integer userId) {
+    public User findUserById(Long userId) {
         return userRepository.findByUserId(userId);
     }
 
-    public void deleteUserById(Integer userId) {
+    public void deleteUserById(Long userId) {
         userRepository.deleteById(userId);
         climberRepository.deleteById(userId);
     }
 
-    public User createNewUser(NewUserRequest newUserRequest) {
-        User newUser = User.builder()
-                .userName(newUserRequest.getUserName())
-                .email(newUserRequest.getEmail())
-                .firstName(newUserRequest.getFirstName())
-                .lastName(newUserRequest.getLastName())
-                .password(newUserRequest.getPassword())
-                .role(newUserRequest.getRole())
-                .build();
 
-        User savedUser = userRepository.save(newUser);
 
-        Climber climber = Climber.builder()
-                .userId(newUser.getUserId())
-                .gender(newUserRequest.getGender())
-                .totalClimbs(0)
-                .skillLevel(Skill.BEGINNER)
-                .totalFlash(0)
-                .totalPoints(0)
-                .boulderGrade(Difficulty.V0)
-                .topRopeGrade(Difficulty.V0)
-                .build();
-        climberRepository.save(climber);
-
-        return savedUser;
-    }
-
-    public void deleteUserByUserId(Integer userId){
+    public void deleteUserByUserId(Long userId){
         userRepository.deleteUserByUserId(userId);
     }
+
+    //    public User createNewUser(NewUserRequest newUserRequest) {
+//        User newUser = User.builder()
+//                .userName(newUserRequest.getUserName())
+//                .email(newUserRequest.getEmail())
+//                .password(newUserRequest.getPassword())
+//                .build();
+//
+//        User savedUser = userRepository.save(newUser);
+//
+//        Climber climber = Climber.builder()
+//                .userId(Math.toIntExact(newUser.getUserId()))
+//                .gender(newUserRequest.getGender())
+//                .totalClimbs(0)
+//                .skillLevel(Skill.BEGINNER)
+//                .totalFlash(0)
+//                .totalPoints(0)
+//                .boulderGrade(Difficulty.V0)
+//                .topRopeGrade(Difficulty.V0)
+//                .build();
+//        climberRepository.save(climber);
+//
+//        return savedUser;
+//    }
 }
 
 

@@ -5,6 +5,8 @@ import com.Fortech.Project.Gym.enums.Difficulty;
 import com.Fortech.Project.Gym.enums.ProjectAvailability;
 import com.Fortech.Project.Gym.enums.ProjectColor;
 import com.Fortech.Project.Gym.enums.ProjectType;
+import com.Fortech.Project.Gym.model.Climber;
+import com.Fortech.Project.Gym.model.ClimberProject;
 import com.Fortech.Project.Gym.model.Project;
 import com.Fortech.Project.Gym.model.request.NewProjectRequest;
 import com.Fortech.Project.Gym.repository.ClimberRepository;
@@ -13,10 +15,12 @@ import com.Fortech.Project.Gym.repository.UserRepository;
 import com.Fortech.Project.Gym.service.ProjectService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/projects")
@@ -34,19 +38,19 @@ public class ProjectController {
         this.projectService = projectService;
     }
 
-    @GetMapping(path = "/projects")
+    @GetMapping(path = "/all")
     public List<Project> getProjects() {
         return projectService.getProjects();
     }
 
 
     @GetMapping(path = "/{projectId}")
-    public Project getProjectById(@PathVariable Integer projectId){
+    public Project getProjectById(@PathVariable Long projectId){
         return projectService.findByProjectId(projectId);
         }
 
     @GetMapping(path = "/by-name")
-    public Project getProjectByName(@RequestParam("projectName") String projectName){
+    public Project getProjectByName(@RequestParam(value = "projectName", required = true) String projectName){
         return projectService.findByProjectName(projectName);
     }
 
@@ -56,12 +60,12 @@ public class ProjectController {
     }
 
     @GetMapping(path = "/by-type")
-    public List<Project> getProjectsByType(@RequestParam("type") ProjectType type){
+    public List<Project> getProjectsByType(@RequestParam(value = "type") ProjectType type){
         return projectService.findByProjectType(type);
     }
 
     @DeleteMapping (path = "/delete/{projectId}")
-    public void deleteProjectById(@PathVariable("projectId") Integer projectId){
+    public void deleteProjectById(@PathVariable("projectId") Long projectId){
           projectService.deleteProjectByProjectId(projectId);
     }
 
@@ -73,9 +77,15 @@ public class ProjectController {
     }
 
     @PostMapping(path = "/update-project-status/{projectId}")
-    public Project updateProjectStatus(@PathVariable Integer projectId, @RequestBody Map<String, String> newProjectStatus) {
+    public Project updateProjectStatus(@PathVariable Long projectId, @RequestBody Map<String, String> newProjectStatus) {
         ProjectAvailability projectAvailability = ProjectAvailability.valueOf(newProjectStatus.get("newProjectStatus"));
         return projectService.updateProjectStatus(projectId, projectAvailability);
+    }
+
+    @GetMapping("/{projectId}/toppedBy")
+    public Set<ClimberProject> getProjects(@PathVariable Long projectId) {
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ResourceNotFoundException("Project not found with id " + projectId));
+        return project.getToppedBy();
     }
 
 }

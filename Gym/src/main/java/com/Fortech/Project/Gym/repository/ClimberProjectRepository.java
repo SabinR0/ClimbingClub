@@ -12,14 +12,18 @@ import java.util.List;
 import java.util.Set;
 
 @Repository
-public interface ClimberProjectRepository extends JpaRepository<ClimberProject, Integer> {
+public interface ClimberProjectRepository extends JpaRepository<ClimberProject, Long> {
 
 
     @Query("SELECT cp.projectId FROM ClimberProject cp WHERE cp.climberId = :climber")
-    Set<Project> findProjectsByClimberId(@Param("climber") Climber climber);
+    Set<Project> findProjectsByClimberId(@Param("climber") Climber climberId);
 
     @Query("SELECT cp.climberId FROM ClimberProject cp WHERE cp.projectId = :project")
     Set<Climber> findClimbersByProjectId(@Param("project") Project projectId);
 
-    Set<ClimberProject> findByClimberIdUserId(Integer userId);
+    Set<ClimberProject> findByClimberIdUserId(Long userId);
+
+    List<ClimberProject> findByProjectId(Long projectId);
+
+    //ClimberProject findByClimberIdAndProjectId(Long climberId, Long projectId);
 }

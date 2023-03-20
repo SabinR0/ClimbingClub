@@ -9,9 +9,11 @@ import com.Fortech.Project.Gym.repository.ProjectRepository;
 import com.Fortech.Project.Gym.repository.UserRepository;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -32,19 +34,6 @@ public class ClimberProjectService {
         this.userRepository = userRepository;
     }
 
-//    public void markProjectFlashed(Long climberId, Long projectId, Boolean flashed) {
-//        ClimberProject climberProject = climberProjectRepository.findByClimberIdAndProjectId(climberId, projectId);
-//        if (climberProject == null) {
-//            Climber climber = new Climber();
-//            climber.setId(climberId);
-//            Project project = projectRepository.findById(projectId).orElseThrow(() -> new ResourceNotFoundException("Project not found"));
-//            climberProject = new ClimberProject();
-//            climberProject.setClimber(climber);
-//            climberProject.setProject(project);
-//        }
-//        climberProject.setFlashed(flashed);
-//        climberProjectRepository.save(climberProject);
-
 
 
     public Set <Climber> findClimbersByProjectId(Project projectId){
@@ -55,7 +44,7 @@ public class ClimberProjectService {
     }
 
 
-    public Set<ClimberProject> getProjectsSentByUserId(Integer userId) {
+    public Set<ClimberProject> getProjectsSentByUserId(Long userId) {
         return climberProjectRepository.findByClimberIdUserId(userId);
     }
    }
