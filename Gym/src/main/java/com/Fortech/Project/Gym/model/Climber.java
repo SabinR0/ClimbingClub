@@ -7,75 +7,81 @@ import jakarta.persistence.*;
 
 import java.util.*;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.Hibernate;
 
 
 @Entity
-@Table(name = "climber")
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Climber  {
+@Table(name = "climber")
+public class Climber {
 
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        @Column(name = "climber_id")
-        private Long climberId;
-        @Enumerated(EnumType.ORDINAL)
-        @Column(name = "skill_level")
-        private Skill skillLevel;
-        @Enumerated(EnumType.ORDINAL)
-        @Column(name = "top_rope_grade")
-        private Difficulty topRopeGrade;
-        @Enumerated(EnumType.ORDINAL)
-        @Column(name = "boulder_grade")
-        private Difficulty boulderGrade;
-        @Column(name = "total_climbs")
-        private Integer totalClimbs;
-        @Column(name = "total_flash")
-        private Integer totalFlash;
-        @Column(name = "total_points")
-        private Integer totalPoints;
-        @Enumerated(EnumType.ORDINAL)
-        @Column(name = "gender")
-        private Gender gender;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "climber_id")
+    private Long climberId;
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "skill_level")
+    private Skill skillLevel;
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "top_rope_grade")
+    private Difficulty topRopeGrade;
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "boulder_grade")
+    private Difficulty boulderGrade;
+    @Column(name = "total_climbs")
+    private Integer totalClimbs;
+    @Column(name = "total_flash")
+    private Integer totalFlash;
+    @Column(name = "total_points")
+    private Integer totalPoints;
+    @Enumerated(EnumType.ORDINAL)
+    private Gender gender;
 
-        @JoinColumn(name = "user_id")
-        private Long userId;
+    @JoinColumn(name = "user_id")
+    private Long userId;
 
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @JoinTable(
+            name = "climber_project",
+            joinColumns = {@JoinColumn(name = "climber_id")},
+            inverseJoinColumns = {@JoinColumn(name = "project_id")}
+    )
 
-        @OneToMany(mappedBy = "climberId", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-       private Set<ClimberProject> projectsSent = new HashSet<>();
+    private Set<Project> projectsSent = new HashSet<>();
 
+    public void addProject(Project project) {
+        projectsSent.add(project);
 
-    public void addProjectSent(ClimberProject climberProject) {
-        projectsSent.add(climberProject);
-       // project.getToppedBy().add(projectSent);
+    }
+//climberProjectDetails
+    @JsonIgnore
+    @OneToMany(mappedBy = "climber")
+    Set<ClimberProjectDetails> projectsCompleted = new HashSet<>();
+    public void addProjectCompleted(ClimberProjectDetails project) {
+        projectsCompleted.add(project);
+
     }
 
-    public Set<ClimberProject> getProjectsSent() {
-        return projectsSent;
-    }
-
-    public Integer calculateTotalFlashed(Set<ClimberProject> completedProjects) {
+    public static Integer calculateTotalFlashed(Set<ClimberProjectDetails> detailsSet, Climber climber) {
         int totalFlashed = 0;
-        for (ClimberProject item : completedProjects) {
-            if (item.isFlashed()) {
+        for (ClimberProjectDetails item : detailsSet) {
+            if (item.getClimber().getClimberId().equals(climber.getClimberId()) && item.getFlashStatus() != null && item.getFlashStatus()) {
                 totalFlashed++;
             }
         }
         return totalFlashed;
     }
 
-    Skill calculateSkillLevel(Set<ClimberProject> completedProjects) {
+
+    public static Skill calculateSkillLevel(Set<Project> completedProjects) {
         double sumDifficulty = 0;
-        for (ClimberProject item : completedProjects) {
-            sumDifficulty += item.getProjectId().getDifficulty().ordinal();
+        for (Project item : completedProjects) {
+            sumDifficulty += item.getDifficulty().ordinal();
         }
 
         double meanDifficulty = sumDifficulty / completedProjects.size();
@@ -107,28 +113,32 @@ public class Climber  {
     }
 
 
-    public static Difficulty calculateBoulderGrade(Set<ClimberProject> completedProjects) {
+    public static Difficulty calculateBoulderGrade(Set<Project> completedProjects) {
 
         Difficulty currentDifficulty = Difficulty.V0;
 
-        for (ClimberProject item : completedProjects) {
-            Difficulty projectDifficulty = item.getProjectId().getDifficulty();
-            if (item.getProjectId().getProjectType().equals(ProjectType.BOULDERING) && currentDifficulty == Difficulty.V0 || projectDifficulty.compareTo(currentDifficulty) > 0) {
+        for (Project item : completedProjects) {
+            Difficulty projectDifficulty = item.getDifficulty();
+            if (item.getProjectType().equals(ProjectType.BOULDERING) && projectDifficulty.compareTo(currentDifficulty) > 0) {
                 currentDifficulty = projectDifficulty;
+            } else {
+                continue;
             }
         }
 
         return currentDifficulty;
     }
 
-    public static Difficulty calculateTopRopeGrade(Set<ClimberProject> completedProjects) {
+    public static Difficulty calculateTopRopeGrade(Set<Project> completedProjects) {
 
         Difficulty currentDifficulty = Difficulty.V0;
 
-        for (ClimberProject item : completedProjects) {
-            Difficulty projectDifficulty = item.getProjectId().getDifficulty();
-            if (item.getProjectId().getProjectType().equals(ProjectType.TOP_ROPE_CLIMBING) && currentDifficulty == Difficulty.V0 || projectDifficulty.compareTo(currentDifficulty) > 0) {
+        for (Project item : completedProjects) {
+            Difficulty projectDifficulty = item.getDifficulty();
+            if (item.getProjectType().equals(ProjectType.TOP_ROPE_CLIMBING) && projectDifficulty.compareTo(currentDifficulty) > 0) {
                 currentDifficulty = projectDifficulty;
+            } else {
+                continue;
             }
         }
 
@@ -136,26 +146,25 @@ public class Climber  {
     }
 
 
-    Integer calculatePoints(Set<ClimberProject> completedProjects) {
+    public static Integer calculatePoints(Set<Project> completedProjects) {
         int totalPoints = 0;
-        for (ClimberProject item : completedProjects) {
-            totalPoints += item.getProjectId().getNumberOfPoints();
+        for (Project item : completedProjects) {
+            totalPoints += item.getNumberOfPoints();
         }
         return totalPoints;
     }
 
 
-    public void recalculateStats( ) {
+    public void recalculateStats() {
 
 
         this.totalClimbs = projectsSent.size();
-        this.totalFlash = calculateTotalFlashed(projectsSent);
+        // this.totalFlash = calculateTotalFlashed(projectsSent);
         this.totalPoints = calculatePoints(projectsSent);
         this.skillLevel = calculateSkillLevel(projectsSent);
         this.topRopeGrade = calculateTopRopeGrade(projectsSent);
         this.boulderGrade = calculateBoulderGrade(projectsSent);
     }
-
 
 
 }

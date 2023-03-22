@@ -4,7 +4,7 @@ import com.Fortech.Project.Gym.enums.Difficulty;
 import com.Fortech.Project.Gym.model.Climber;
 import com.Fortech.Project.Gym.model.User;
 import com.Fortech.Project.Gym.model.request.NewUserRequest;
-import com.Fortech.Project.Gym.repository.ClimberProjectRepository;
+//import com.Fortech.Project.Gym.repository.ClimberProjectRepository;
 import com.Fortech.Project.Gym.repository.ClimberRepository;
 import com.Fortech.Project.Gym.repository.ProjectRepository;
 import com.Fortech.Project.Gym.repository.UserRepository;
@@ -21,15 +21,15 @@ public class UserService {
 
     private final ProjectRepository projectRepository;
 
-    private final ClimberProjectRepository climberProjectRepository;
+   // private final ClimberProjectRepository climberProjectRepository;
 
     private final UserRepository userRepository;
 
     @Autowired
-    public UserService(ClimberRepository climberRepository, ProjectRepository projectRepository, ClimberProjectRepository climberProjectRepository, UserRepository userRepository) {
+    public UserService(ClimberRepository climberRepository, ProjectRepository projectRepository/*, ClimberProjectRepository climberProjectRepository */, UserRepository userRepository) {
         this.climberRepository = climberRepository;
         this.projectRepository = projectRepository;
-        this.climberProjectRepository = climberProjectRepository;
+       // this.climberProjectRepository = climberProjectRepository;
         this.userRepository = userRepository;
     }
 

@@ -1,20 +1,16 @@
 package com.Fortech.Project.Gym.controller;
 
 import com.Fortech.Project.Gym.enums.Gender;
-import com.Fortech.Project.Gym.enums.ProjectType;
 import com.Fortech.Project.Gym.model.*;
-import com.Fortech.Project.Gym.model.request.ClimberProjectRequest;
+import com.Fortech.Project.Gym.model.request.ProjectSentRequest;
 import com.Fortech.Project.Gym.repository.ClimberRepository;
 import com.Fortech.Project.Gym.repository.UserRepository;
 import com.Fortech.Project.Gym.service.ClimberService;
-import jakarta.persistence.PostUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/climbers")
@@ -48,7 +44,7 @@ public class ClimberController {
 
 
     @PostMapping("/update-stats")
-    Climber completeNewProject(@RequestBody ClimberProjectRequest climberProjectRequest){
+    Climber completeNewProject(@RequestBody ProjectSentRequest climberProjectRequest){
         return climberService.completeNewProject(climberProjectRequest);
 
     }
@@ -62,18 +58,18 @@ public class ClimberController {
     @PutMapping("/pleasework/{id}")
     public ResponseEntity<Climber> updateClimber(@PathVariable Long id) {
         Climber currentClient = climberRepository.findById(id).orElseThrow(RuntimeException::new);
-        currentClient.recalculateStats();
+       // currentClient.recalculateStats();
         climberRepository.save(currentClient);
 
         return ResponseEntity.ok(currentClient);
     }
 
 
-    @GetMapping("/{climberId}/projects")
-    public Set<ClimberProject> getProjects(@PathVariable Long climberId) {
-        Climber climber = climberRepository.findById(climberId).orElseThrow(() -> new ResourceNotFoundException("Person not found with id " + climberId));
-        return climber.getProjectsSent();
-    }
+//    @GetMapping("/{climberId}/projects")
+//    public Set<ClimberProject> getProjects(@PathVariable Long climberId) {
+//        Climber climber = climberRepository.findById(climberId).orElseThrow(() -> new ResourceNotFoundException("Person not found with id " + climberId));
+//        return climber.getProjectsSent();
+//    }
 
 
 }

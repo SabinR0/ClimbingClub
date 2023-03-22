@@ -4,10 +4,11 @@ import com.Fortech.Project.Gym.enums.Difficulty;
 import com.Fortech.Project.Gym.enums.ProjectAvailability;
 import com.Fortech.Project.Gym.enums.ProjectType;
 import com.Fortech.Project.Gym.exceptions.ProjectNotFoundException;
-import com.Fortech.Project.Gym.model.ClimberProject;
+//import com.Fortech.Project.Gym.model.ClimberProject;
+import com.Fortech.Project.Gym.model.Climber;
 import com.Fortech.Project.Gym.model.Project;
 import com.Fortech.Project.Gym.model.request.NewProjectRequest;
-import com.Fortech.Project.Gym.repository.ClimberProjectRepository;
+//import com.Fortech.Project.Gym.repository.ClimberProjectRepository;
 import com.Fortech.Project.Gym.repository.ClimberRepository;
 import com.Fortech.Project.Gym.repository.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +25,13 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
 
-    private final ClimberProjectRepository climberProjectRepository;
+   // private final ClimberProjectRepository climberProjectRepository;
 
     @Autowired
-    public ProjectService(ClimberRepository climberRepository, ProjectRepository projectRepository, ClimberProjectRepository climberProjectRepository) {
+    public ProjectService(ClimberRepository climberRepository, ProjectRepository projectRepository/*, ClimberProjectRepository climberProjectRepository */) {
         this.climberRepository = climberRepository;
         this.projectRepository = projectRepository;
-        this.climberProjectRepository = climberProjectRepository;
+        //this.climberProjectRepository = climberProjectRepository;
     }
 
     public List<Project> getProjects() {
@@ -83,6 +84,22 @@ public class ProjectService {
         return projectRepository.save(newProject);
     }
 
-
+//    public Project saveProject(Project project) {
+//        Project newProject = new Project();
+//        newProject.setCustomerName(customer.getCustomerName());
+//        newProject.getAttributedClimbers().addAll((project.getAttributedClimbers()
+//                .stream()
+//                .map(p -> {
+//                    Climber climber = climberRepository.findByClimberId(sale.getVehicle().getVehicleId());
+//                    Sale newSale = new Sale();
+//                    newSale.setVehicle(vehicle);
+//                    newSale.setCustomer(newCustomer);
+//                    newSale.setDiscount(sale.getDiscount());
+//                    return newSale;
+//                })
+//                .collect(Collectors.toList())
+//        ));
+//        return customerRepository.save(newCustomer);
+//    }
 
 }

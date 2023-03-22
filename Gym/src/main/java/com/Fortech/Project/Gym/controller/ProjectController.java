@@ -6,7 +6,7 @@ import com.Fortech.Project.Gym.enums.ProjectAvailability;
 import com.Fortech.Project.Gym.enums.ProjectColor;
 import com.Fortech.Project.Gym.enums.ProjectType;
 import com.Fortech.Project.Gym.model.Climber;
-import com.Fortech.Project.Gym.model.ClimberProject;
+//import com.Fortech.Project.Gym.model.ClimberProject;
 import com.Fortech.Project.Gym.model.Project;
 import com.Fortech.Project.Gym.model.request.NewProjectRequest;
 import com.Fortech.Project.Gym.repository.ClimberRepository;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/projects")
 public class ProjectController {
@@ -82,10 +82,10 @@ public class ProjectController {
         return projectService.updateProjectStatus(projectId, projectAvailability);
     }
 
-    @GetMapping("/{projectId}/toppedBy")
-    public Set<ClimberProject> getProjects(@PathVariable Long projectId) {
-        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ResourceNotFoundException("Project not found with id " + projectId));
-        return project.getToppedBy();
-    }
+//    @GetMapping("/{projectId}/toppedBy")
+//    public Set<ClimberProject> getProjects(@PathVariable Long projectId) {
+//        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ResourceNotFoundException("Project not found with id " + projectId));
+//        return project.getToppedBy();
+//    }
 
 }
