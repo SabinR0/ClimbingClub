@@ -15,11 +15,11 @@ public class ClimberProjectRequest {
     Long projectId;
     Long climberId;
 
-    Difficulty personalRating;
-
-    Boolean flashStatus;
-
-    public Boolean getFlashStatus() {
-        return flashStatus;
-    }
+//    Difficulty personalRating;
+//
+//    Boolean flashStatus;
+//
+//    public Boolean getFlashStatus() {
+//        return flashStatus;
+//    }
 }
