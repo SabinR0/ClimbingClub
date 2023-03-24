@@ -10,13 +10,11 @@ import com.Fortech.Project.Gym.repository.ClimberProjectDetailsRepository;
 import com.Fortech.Project.Gym.repository.ClimberRepository;
 import com.Fortech.Project.Gym.repository.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringApplicationShutdownHandlers;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
-import java.util.Set;
+
 
 import static com.Fortech.Project.Gym.model.Climber.calculateTotalFlashed;
 import static com.Fortech.Project.Gym.model.ClimberProjectDetails.detailsSet;
@@ -64,7 +62,7 @@ public class ClimberService {
             throw new ResourceNotFoundException("Project not found");
         }
 
-        ClimberProjectKey climberProjectKey = new ClimberProjectKey(climber.getClimberId(),project.getProjectId());
+        ClimberProjectKey climberProjectKey = new ClimberProjectKey(climber.getClimberId(), project.getProjectId());
 
         ClimberProjectDetails climberProjectDetails = ClimberProjectDetails.builder()
                 .climberProjectKey(climberProjectKey)
@@ -76,8 +74,8 @@ public class ClimberService {
 
         detailsSet.add(climberProjectDetails);
         climberProjectDetailsRepository.save(climberProjectDetails);
-        project.setClimbersRating(calculateClimbersRating(detailsSet,project));
-        climber.setTotalFlash(calculateTotalFlashed(detailsSet,climber));
+        project.setClimbersRating(calculateClimbersRating(detailsSet, project));
+        climber.setTotalFlash(calculateTotalFlashed(detailsSet, climber));
         projectRepository.save(project);
         climber.addProject(project);
         climber.recalculateStats();
@@ -85,8 +83,6 @@ public class ClimberService {
 
         return climber;
     }
-
-
 
 
     public void createClimberStats(User user, SignupRequest signUpRequest) {

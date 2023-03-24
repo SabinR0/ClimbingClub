@@ -3,10 +3,9 @@ package com.Fortech.Project.Gym.controller;
 import com.Fortech.Project.Gym.enums.Gender;
 import com.Fortech.Project.Gym.model.*;
 import com.Fortech.Project.Gym.model.request.ProjectSentRequest;
-import com.Fortech.Project.Gym.repository.ClimberRepository;
-import com.Fortech.Project.Gym.repository.UserRepository;
 import com.Fortech.Project.Gym.service.ClimberService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,59 +16,62 @@ import java.util.List;
 public class ClimberController {
 
     private final ClimberService climberService;
-    private final ClimberRepository climberRepository;
-    private final UserRepository userRepository;
+
 
     @Autowired
-    public ClimberController(ClimberService climberService, ClimberRepository climberRepository, UserRepository userRepository) {
+    public ClimberController(ClimberService climberService) {
         this.climberService = climberService;
-        this.climberRepository = climberRepository;
-        this.userRepository = userRepository;
+
     }
 
     @GetMapping("/all")
-    public List<Climber> getClimbers() {
-        return climberService.getClimbers();
+    public ResponseEntity<List<Climber>> getClimbers() {
+        List<Climber> climbers = climberService.getClimbers();
+        if (climbers.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(climbers);
+        }
     }
 
+
     @GetMapping("/ladder")
-    public List<Climber> getSortedClimbersByTotalPoints() {
-        return climberService.sortClimbersByTotalPoints();
+    public ResponseEntity<?> getSortedClimbersByTotalPoints() {
+        List<Climber> climbers = climberService.sortClimbersByTotalPoints();
+
+        if (climbers.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No climbers found.");
+        }
+
+        return ResponseEntity.ok(climbers);
     }
 
     @GetMapping("/{userId}")
-    public Climber getClimberByUserId(@PathVariable Long userId) {
-        return climberService.getClimberByUserId(userId);
+    public ResponseEntity<Climber> getClimberByUserId(@PathVariable Long userId) {
+        Climber climber = climberService.getClimberByUserId(userId);
+        if (climber == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(climber);
     }
 
 
-    @PostMapping("/update-stats")
-    Climber completeNewProject(@RequestBody ProjectSentRequest climberProjectRequest){
-        return climberService.completeNewProject(climberProjectRequest);
+    @PostMapping("/updated-stats")
+    Climber sendProject(@RequestBody ProjectSentRequest projectSentRequest) {
+        return climberService.completeNewProject(projectSentRequest);
 
     }
 
     @GetMapping(path = "/by-gender")
-    public List<Climber> findAllByGenderOrderByTotalPointsDesc(@RequestParam(value = "gender") Gender gender){
-        return climberService.findAllByGenderOrderByTotalPointsDesc(gender);
+    public ResponseEntity<List<Climber>> findAllByGenderOrderByTotalPointsDesc(@RequestParam(value = "gender") Gender gender) {
+        List<Climber> climbers = climberService.findAllByGenderOrderByTotalPointsDesc(gender);
+
+        if (climbers.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(climbers);
     }
-
-
-    @PutMapping("/pleasework/{id}")
-    public ResponseEntity<Climber> updateClimber(@PathVariable Long id) {
-        Climber currentClient = climberRepository.findById(id).orElseThrow(RuntimeException::new);
-       // currentClient.recalculateStats();
-        climberRepository.save(currentClient);
-
-        return ResponseEntity.ok(currentClient);
-    }
-
-
-//    @GetMapping("/{climberId}/projects")
-//    public Set<ClimberProject> getProjects(@PathVariable Long climberId) {
-//        Climber climber = climberRepository.findById(climberId).orElseThrow(() -> new ResourceNotFoundException("Person not found with id " + climberId));
-//        return climber.getProjectsSent();
-//    }
 
 
 }

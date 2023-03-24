@@ -8,6 +8,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+
 @Data
 @AllArgsConstructor
 
@@ -15,18 +16,16 @@ public class NewProjectRequest {
     private String projectName;
     private String projectDescription;
     private Integer numberOfPoints;
-    @Enumerated(EnumType.ORDINAL)
-    private ProjectAvailability projectStatus;
-    @Enumerated(EnumType.ORDINAL)
-    private ProjectColor projectColor;
+    private Long xCoordinate;
+    private Long yCoordinate;
     @Enumerated(EnumType.ORDINAL)
     private Difficulty difficulty;
     @Enumerated(EnumType.ORDINAL)
     private ProjectType projectType;
-
-    private Long xCoordinate;
-
-    private Long yCoordinate;
+    @Enumerated(EnumType.ORDINAL)
+    private ProjectColor projectColor;
+    @Enumerated(EnumType.ORDINAL)
+    private ProjectAvailability projectStatus;
 
 
 }

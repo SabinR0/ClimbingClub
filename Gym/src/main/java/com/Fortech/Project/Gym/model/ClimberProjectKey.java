@@ -14,9 +14,9 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class ClimberProjectKey implements Serializable {
 
-    @Column (name = "climber_id")
+    @Column(name = "climber_id")
     Long climberId;
 
-   @Column(name = "project_id")
+    @Column(name = "project_id")
     Long projectId;
 }

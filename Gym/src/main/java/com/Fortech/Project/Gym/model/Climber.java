@@ -4,11 +4,9 @@ import com.Fortech.Project.Gym.enums.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
-
 import java.util.*;
 
 import lombok.*;
-import org.hibernate.Hibernate;
 
 
 @Entity
@@ -51,32 +49,37 @@ public class Climber {
             joinColumns = {@JoinColumn(name = "climber_id")},
             inverseJoinColumns = {@JoinColumn(name = "project_id")}
     )
-
     private Set<Project> projectsSent = new HashSet<>();
 
     public void addProject(Project project) {
         projectsSent.add(project);
 
     }
-//climberProjectDetails
+
+    //climberProjectDetails
     @JsonIgnore
     @OneToMany(mappedBy = "climber")
     Set<ClimberProjectDetails> projectsCompleted = new HashSet<>();
-    public void addProjectCompleted(ClimberProjectDetails project) {
-        projectsCompleted.add(project);
 
-    }
 
-    public static Integer calculateTotalFlashed(Set<ClimberProjectDetails> detailsSet, Climber climber) {
-        int totalFlashed = 0;
-        for (ClimberProjectDetails item : detailsSet) {
-            if (item.getClimber().getClimberId().equals(climber.getClimberId()) && item.getFlashStatus() != null && item.getFlashStatus()) {
-                totalFlashed++;
-            }
+    public void recalculateStats() throws IllegalArgumentException {
+        if (projectsSent.isEmpty()) {
+            throw new IllegalArgumentException("Cannot recalculate stats : empty set of projects");
         }
-        return totalFlashed;
+        this.totalClimbs = projectsSent.size();
+        this.totalPoints = calculatePoints(projectsSent);
+        this.skillLevel = calculateSkillLevel(projectsSent);
+        this.topRopeGrade = calculateTopRopeGrade(projectsSent);
+        this.boulderGrade = calculateBoulderGrade(projectsSent);
     }
 
+    public static Integer calculatePoints(Set<Project> completedProjects) {
+        int totalPoints = 0;
+        for (Project item : completedProjects) {
+            totalPoints += item.getNumberOfPoints();
+        }
+        return totalPoints;
+    }
 
     public static Skill calculateSkillLevel(Set<Project> completedProjects) {
         double sumDifficulty = 0;
@@ -121,8 +124,6 @@ public class Climber {
             Difficulty projectDifficulty = item.getDifficulty();
             if (item.getProjectType().equals(ProjectType.BOULDERING) && projectDifficulty.compareTo(currentDifficulty) > 0) {
                 currentDifficulty = projectDifficulty;
-            } else {
-                continue;
             }
         }
 
@@ -137,8 +138,6 @@ public class Climber {
             Difficulty projectDifficulty = item.getDifficulty();
             if (item.getProjectType().equals(ProjectType.TOP_ROPE_CLIMBING) && projectDifficulty.compareTo(currentDifficulty) > 0) {
                 currentDifficulty = projectDifficulty;
-            } else {
-                continue;
             }
         }
 
@@ -146,25 +145,16 @@ public class Climber {
     }
 
 
-    public static Integer calculatePoints(Set<Project> completedProjects) {
-        int totalPoints = 0;
-        for (Project item : completedProjects) {
-            totalPoints += item.getNumberOfPoints();
+    public static Integer calculateTotalFlashed(Set<ClimberProjectDetails> detailsSet, Climber climber) throws IllegalArgumentException {
+        if (detailsSet.isEmpty()) {
+            throw new IllegalArgumentException("Cannot calculate total flashed: empty set of ClimberProjectDetails");
         }
-        return totalPoints;
+        int totalFlashed = 0;
+        for (ClimberProjectDetails item : detailsSet) {
+            if (item.getClimber().getClimberId().equals(climber.getClimberId()) && item.getFlashStatus() != null && item.getFlashStatus()) {
+                totalFlashed++;
+            }
+        }
+        return totalFlashed;
     }
-
-
-    public void recalculateStats() {
-
-
-        this.totalClimbs = projectsSent.size();
-        // this.totalFlash = calculateTotalFlashed(projectsSent);
-        this.totalPoints = calculatePoints(projectsSent);
-        this.skillLevel = calculateSkillLevel(projectsSent);
-        this.topRopeGrade = calculateTopRopeGrade(projectsSent);
-        this.boulderGrade = calculateBoulderGrade(projectsSent);
-    }
-
-
 }

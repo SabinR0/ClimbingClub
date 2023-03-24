@@ -19,7 +19,7 @@ import java.util.Set;
 public class ClimberProjectDetails {
 
     @EmbeddedId
-     ClimberProjectKey climberProjectKey;
+    ClimberProjectKey climberProjectKey;
     @JsonIgnore
     @ManyToOne
     @MapsId("climberId")
@@ -32,17 +32,16 @@ public class ClimberProjectDetails {
     private Project project;
 
     @Enumerated(EnumType.ORDINAL)
-    @Column(name ="climber_rating")
+    @Column(name = "climber_rating")
     private Difficulty climbersRating;
 
-    @Column(name ="flash_status")
+    @Column(name = "flash_status")
     private Boolean flashStatus;
-
-
 
     public Boolean getFlashStatus() {
         return flashStatus;
     }
-     public static  Set<ClimberProjectDetails> detailsSet = new HashSet<>();
+
+    public static Set<ClimberProjectDetails> detailsSet = new HashSet<>();
 
 }

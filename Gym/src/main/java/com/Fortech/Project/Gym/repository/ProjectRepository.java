@@ -17,6 +17,7 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     List<Project> findAllByOrderByDifficulty();
 
     List<Project> findAllByProjectType(ProjectType projectType);
+    Boolean existsByProjectName(String projectName);
 
 
 

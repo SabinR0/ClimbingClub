@@ -5,10 +5,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.Fortech.Project.Gym.enums.Difficulty;
-import com.Fortech.Project.Gym.enums.Skill;
-import com.Fortech.Project.Gym.model.Climber;
-import com.Fortech.Project.Gym.repository.ClimberRepository;
 import com.Fortech.Project.Gym.service.ClimberService;
 import jakarta.validation.Valid;
 

@@ -4,34 +4,25 @@ import com.Fortech.Project.Gym.enums.Difficulty;
 import com.Fortech.Project.Gym.enums.ProjectAvailability;
 import com.Fortech.Project.Gym.enums.ProjectType;
 import com.Fortech.Project.Gym.exceptions.ProjectNotFoundException;
-//import com.Fortech.Project.Gym.model.ClimberProject;
-import com.Fortech.Project.Gym.model.Climber;
 import com.Fortech.Project.Gym.model.Project;
 import com.Fortech.Project.Gym.model.request.NewProjectRequest;
-//import com.Fortech.Project.Gym.repository.ClimberProjectRepository;
-import com.Fortech.Project.Gym.repository.ClimberRepository;
 import com.Fortech.Project.Gym.repository.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
+
 
 @Service
 
 public class ProjectService {
 
-    private final ClimberRepository climberRepository;
-
     private final ProjectRepository projectRepository;
 
-   // private final ClimberProjectRepository climberProjectRepository;
 
     @Autowired
-    public ProjectService(ClimberRepository climberRepository, ProjectRepository projectRepository/*, ClimberProjectRepository climberProjectRepository */) {
-        this.climberRepository = climberRepository;
+    public ProjectService(ProjectRepository projectRepository) {
         this.projectRepository = projectRepository;
-        //this.climberProjectRepository = climberProjectRepository;
     }
 
     public List<Project> getProjects() {
@@ -53,9 +44,9 @@ public class ProjectService {
     public List<Project> findByProjectType(ProjectType projectType) {
         return projectRepository.findAllByProjectType(projectType);
     }
-    //@Transactional
+
     public void deleteProjectByProjectId(Long projectId) {
-         projectRepository.deleteById(projectId);
+        projectRepository.deleteById(projectId);
     }
 
     public Project updateProjectStatus(Long projectId, ProjectAvailability newStatus) {
@@ -65,8 +56,6 @@ public class ProjectService {
         projectRepository.save(project);
         return project;
     }
-
-
 
     public Project createNewProject(NewProjectRequest newProjectRequest) {
         Project newProject = Project.builder()
@@ -84,22 +73,8 @@ public class ProjectService {
         return projectRepository.save(newProject);
     }
 
-//    public Project saveProject(Project project) {
-//        Project newProject = new Project();
-//        newProject.setCustomerName(customer.getCustomerName());
-//        newProject.getAttributedClimbers().addAll((project.getAttributedClimbers()
-//                .stream()
-//                .map(p -> {
-//                    Climber climber = climberRepository.findByClimberId(sale.getVehicle().getVehicleId());
-//                    Sale newSale = new Sale();
-//                    newSale.setVehicle(vehicle);
-//                    newSale.setCustomer(newCustomer);
-//                    newSale.setDiscount(sale.getDiscount());
-//                    return newSale;
-//                })
-//                .collect(Collectors.toList())
-//        ));
-//        return customerRepository.save(newCustomer);
-//    }
 
+    public boolean existsByProjectName(String projectName) {
+        return projectRepository.existsByProjectName(projectName);
+    }
 }

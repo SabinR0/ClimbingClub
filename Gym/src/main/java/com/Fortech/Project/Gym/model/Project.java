@@ -4,12 +4,10 @@ import com.Fortech.Project.Gym.enums.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
-import java.io.Serializable;
 import java.util.*;
 
 import lombok.*;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.NaturalIdCache;
+
 
 @Entity
 @Getter
@@ -26,8 +24,6 @@ public class Project {
     private Long projectId;
     @Column(name = "project_name")
     private String projectName;
-    @Enumerated(EnumType.ORDINAL)
-    private Difficulty difficulty;
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "project_type")
     private ProjectType projectType;
@@ -48,6 +44,9 @@ public class Project {
     private Long xCoordinate;
     @Column(name = "y_coordinate")
     private Long yCoordinate;
+    @Enumerated(EnumType.ORDINAL)
+    private Difficulty difficulty;
+
     @JsonIgnore
     @ManyToMany(mappedBy = "projectsSent", fetch = FetchType.EAGER)
     private Set<Climber> toppedBy = new HashSet<>();
@@ -60,15 +59,19 @@ public class Project {
     }
 
     //    @ManyToOne
-//    @JoinColumn(name="club_id")
-//    private Club club;
-//climberProjectDetails
+//    @JoinColumn(name = "club_id")
+//    private Club clubId;
+//    climberProjectDetails
+
     @JsonIgnore
     @OneToMany(mappedBy = "project")
     Set<ClimberProjectDetails> attributedClimbers = new HashSet<>();
 
     //
-    public static Difficulty calculateClimbersRating(Set<ClimberProjectDetails> detailsSet, Project project) {
+    public static Difficulty calculateClimbersRating(Set<ClimberProjectDetails> detailsSet, Project project) throws IllegalArgumentException {
+        if (detailsSet.isEmpty()) {
+            throw new IllegalArgumentException("Cannot calculate climbers rating: empty set of ClimberProjectDetails");
+        }
         double totalRating = 0;
         int numRatings = 0;
         for (ClimberProjectDetails item : detailsSet) {
@@ -105,6 +108,5 @@ public class Project {
         };
 
     }
-
 
 }
